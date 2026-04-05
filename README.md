@@ -98,7 +98,7 @@ The `IsSpamUsername`-rule has one optional paramter `frequency` (default 10) to 
 
 #### Adding to the Database
 
-You can report a spammer to the StopForumSpam database using `addToDatabase()`. This requires an API key (set `STOPFORUMSPAM_APIKEY` in your `.env`) and all three of: `ip`, `email`, and `username`. Evidence is optional and should be the post content. Do not include your email or site URL in Evidence.
+You can report a spammer to the StopForumSpam database using `reportSpam()`. This requires an API key (set `STOPFORUMSPAM_APIKEY` in your `.env`) and all three of: `ip`, `email`, and `username`. Evidence is optional and should be the post content. Do not include your email or site URL in Evidence.
 
 See Adding to the Database for more information: https://www.stopforumspam.com/usage
 
@@ -106,14 +106,14 @@ See Adding to the Database for more information: https://www.stopforumspam.com/u
 \StopForumSpam::setIp('8.8.8.8')
     ->setEmail('spam@example.com')
     ->setUsername('spammer')
-    ->addToDatabase();
+    ->reportSpam();
 
 // Optionally include evidence
 \StopForumSpam::setIp('8.8.8.8')
     ->setEmail('spam@example.com')
     ->setUsername('spammer')
     ->setEvidence('Posted 50 identical spam messages.')
-    ->addToDatabase();
+    ->reportSpam();
 ```
 
 Returns `true` on success. Throws a `MalformedIPException` if the IP is invalid, a `MalformedEmailException` if the email is invalid, or an `Exception` if the API key or any required field is missing.

@@ -18,7 +18,7 @@ class StopForumSpam
     protected $apiUrl = 'https://api.stopforumspam.org/api';
 
     /** @var string */
-    protected $addToDatabaseUrl = 'https://www.stopforumspam.com/add.php';
+    protected $reportSpamUrl = 'https://www.stopforumspam.com/add.php';
 
     /** @var string */
     protected $apiKey;
@@ -104,22 +104,22 @@ class StopForumSpam
     /**
     * @return string
     */
-    public function getAddToDatabaseUrl(): string
+    public function getReportSpamUrl(): string
     {
-        return $this->addToDatabaseUrl;
+        return $this->reportSpamUrl;
     }
 
     /**
-    * @param string $addToDatabaseUrl
+    * @param string $reportSpamUrl
     * @return $this
     */
-    public function setAddToDatabaseUrl(string $addToDatabaseUrl): static
+    public function setReportSpamUrl(string $reportSpamUrl): static
     {
-        if (filter_var($addToDatabaseUrl, FILTER_VALIDATE_URL) === false) {
+        if (filter_var($reportSpamUrl, FILTER_VALIDATE_URL) === false) {
             throw new MalformedURLException();
         }
 
-        $this->addToDatabaseUrl = $addToDatabaseUrl;
+        $this->reportSpamUrl = $reportSpamUrl;
 
         return $this;
     }
@@ -301,10 +301,7 @@ class StopForumSpam
      */
     protected function getResponseCode(string $url, array $fields): int
     {
-        // Urlencode all values to satisfy the SFS requirement
-        $encodedFields = http_build_query(
-            array_map(fn($v) => urlencode((string) $v), $fields)
-        );
+        $encodedFields = http_build_query($fields);
 
         try {
             $response = Http::withHeaders([
@@ -329,7 +326,7 @@ class StopForumSpam
      * @throws \Exception
      * @throws MalformedEmailException
      */
-    public function addToDatabase(): bool
+    public function reportSpam(): bool
     {
         if (empty($this->getApiKey())) {
             throw new Exception('StopForumSpam API key is required.');
@@ -366,6 +363,6 @@ class StopForumSpam
             $fields['evidence'] = mb_convert_encoding($this->getEvidence(), 'UTF-8');
         }
 
-        return $this->getResponseCode($this->getAddToDatabaseUrl(), $fields) === 200;
+        return $this->getResponseCode($this->getReportSpamUrl(), $fields) === 200;
     }
 }
